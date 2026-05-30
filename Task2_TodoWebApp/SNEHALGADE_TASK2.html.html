@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow — Premium Task Manager</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ── TOAST CONTAINER ── -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ── CONFETTI CANVAS ── -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ── CONFIRMATION MODAL ── -->
+  <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-box confirm-box">
+      <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3 id="confirm-title">Delete Task?</h3>
+      <p id="confirm-message">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button id="confirm-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="confirm-ok"     class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EDIT MODAL ── -->
+  <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="modal-box edit-box">
+      <button class="modal-close" id="edit-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h3 id="edit-modal-title"><i class="fa-solid fa-pen-to-square"></i> Edit Task</h3>
+      <textarea id="edit-textarea" rows="3" placeholder="Task description…" aria-label="Edit task text"></textarea>
+      <div class="edit-priority-row">
+        <span>Priority:</span>
+        <label class="priority-opt high">
+          <input type="radio" name="edit-priority" value="high" /> High
+        </label>
+        <label class="priority-opt medium">
+          <input type="radio" name="edit-priority" value="medium" /> Medium
+        </label>
+        <label class="priority-opt low">
+          <input type="radio" name="edit-priority" value="low" /> Low
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="edit-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="edit-save"   class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MAIN LAYOUT
+  ══════════════════════════════ -->
+  <div class="app-shell">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon"><i class="fa-solid fa-bolt-lightning"></i></span>
+        <span class="brand-name">TaskFlow</span>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Filter navigation">
+        <button class="nav-item active" data-filter="all">
+          <i class="fa-solid fa-layer-group"></i><span>All Tasks</span>
+          <span class="nav-badge" id="badge-all">0</span>
+        </button>
+        <button class="nav-item" data-filter="pending">
+          <i class="fa-regular fa-clock"></i><span>Pending</span>
+          <span class="nav-badge" id="badge-pending">0</span>
+        </button>
+        <button class="nav-item" data-filter="completed">
+          <i class="fa-solid fa-circle-check"></i><span>Completed</span>
+          <span class="nav-badge" id="badge-completed">0</span>
+        </button>
+      </nav>
+
+      <!-- Stats widget in sidebar -->
+      <div class="sidebar-stats">
+        <div class="ring-wrap">
+          <svg class="progress-ring" viewBox="0 0 80 80" aria-hidden="true">
+            <circle class="ring-bg"   cx="40" cy="40" r="32" />
+            <circle class="ring-fill" cx="40" cy="40" r="32" id="ring-fill" />
+          </svg>
+          <div class="ring-label">
+            <span id="ring-pct">0%</span>
+            <small>done</small>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-cell">
+            <span class="stat-num" id="stat-total">0</span>
+            <span class="stat-lbl">Total</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-num" id="stat-pending">0</span>
+            <span class="stat-lbl">Pending</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-num" id="stat-done">0</span>
+            <span class="stat-lbl">Done</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon" id="theme-icon"></i>
+          <span id="theme-label">Dark Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="main-content">
+
+      <!-- Header -->
+      <header class="top-bar">
+        <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="top-bar-left">
+          <h1 class="page-title">My Tasks</h1>
+          <p class="motivational" id="motivational-msg">Stay productive today! 🚀</p>
+        </div>
+        <div class="top-bar-right">
+          <div class="clock" id="live-clock" aria-live="polite">00:00:00</div>
+        </div>
+      </header>
+
+      <!-- Add Task Bar -->
+      <section class="add-task-bar glass-card" aria-label="Add new task">
+        <div class="input-wrap">
+          <i class="fa-solid fa-pencil input-icon"></i>
+          <input
+            type="text"
+            id="task-input"
+            placeholder="What needs to be done today?"
+            maxlength="200"
+            aria-label="New task text"
+            autocomplete="off"
+          />
+        </div>
+        <div class="add-task-controls">
+          <div class="priority-selector" role="group" aria-label="Priority">
+            <button class="priority-btn active" data-p="medium" aria-pressed="true">
+              <span class="dot medium"></span> Medium
+            </button>
+            <button class="priority-btn" data-p="high" aria-pressed="false">
+              <span class="dot high"></span> High
+            </button>
+            <button class="priority-btn" data-p="low" aria-pressed="false">
+              <span class="dot low"></span> Low
+            </button>
+          </div>
+          <button class="btn btn-primary add-btn" id="add-btn" aria-label="Add task">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Task</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Search + Filter Bar -->
+      <div class="search-filter-bar">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="search"
+            id="search-input"
+            placeholder="Search tasks…"
+            aria-label="Search tasks"
+          />
+          <button class="clear-search hidden" id="clear-search" aria-label="Clear search">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="filter-chips" role="group" aria-label="Filter tasks">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="pending">Pending</button>
+          <button class="chip" data-filter="completed">Completed</button>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-bar-wrap" aria-label="Task completion progress">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
+        </div>
+        <span class="progress-bar-label" id="progress-bar-label">0 of 0 completed</span>
+      </div>
+
+      <!-- ── PENDING TASKS ── -->
+      <section class="task-section" id="pending-section">
+        <div class="section-header">
+          <h2><i class="fa-regular fa-clock"></i> Pending Tasks</h2>
+          <span class="section-count" id="pending-count">0</span>
+        </div>
+        <div class="task-list" id="pending-list" data-status="pending">
+          <!-- tasks injected here -->
+        </div>
+        <div class="empty-state" id="pending-empty">
+          <div class="empty-illustration">
+            <i class="fa-solid fa-inbox"></i>
+          </div>
+          <h3>No pending tasks!</h3>
+          <p>Add a new task above to get started 🚀</p>
+        </div>
+      </section>
+
+      <!-- ── COMPLETED TASKS ── -->
+      <section class="task-section" id="completed-section">
+        <div class="section-header">
+          <h2><i class="fa-solid fa-circle-check"></i> Completed Tasks</h2>
+          <span class="section-count" id="completed-count">0</span>
+        </div>
+        <div class="task-list" id="completed-list" data-status="completed">
+          <!-- tasks injected here -->
+        </div>
+        <div class="empty-state hidden" id="completed-empty">
+          <div class="empty-illustration">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <h3>Nothing completed yet</h3>
+          <p>Mark tasks done to see them here 🎯</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── MOBILE FAB ── -->
+  <button class="fab" id="fab" aria-label="Add task">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>

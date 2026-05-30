@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ThermoConvert — A modern, interactive temperature converter supporting Celsius, Fahrenheit, and Kelvin." />
+  <title>ThermoConvert — Temperature Converter</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ========== TOAST CONTAINER ========== -->
+  <div id="toast-container" role="alert" aria-live="polite"></div>
+
+  <!-- ========== BACKGROUND ORBS ========== -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2C10.34 2 9 3.34 9 5v8.54A5 5 0 1 0 15 18V5c0-1.66-1.34-3-3-3z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="18" r="2.5" fill="currentColor" opacity="0.5"/>
+          <line x1="9" y1="9" x2="8" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="9" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="9" y1="6" x2="8" y2="6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">ThermoConvert</span>
+      </div>
+
+      <div class="header-right">
+        <div class="datetime-display" id="datetime-display" aria-label="Current date and time"></div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+          <span class="theme-icon theme-icon--sun" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main-content">
+    <div class="page-wrapper">
+
+      <!-- Hero title -->
+      <section class="hero" aria-labelledby="hero-title">
+        <h1 class="hero-title" id="hero-title">Temperature<br /><em>Converter</em></h1>
+        <p class="hero-subtitle">Instant precision across Celsius, Fahrenheit &amp; Kelvin</p>
+      </section>
+
+      <!-- Converter Card -->
+      <section class="converter-card glass" aria-label="Temperature converter">
+
+        <!-- FROM unit -->
+        <div class="field-group">
+          <label class="field-label" for="temp-input">Enter Temperature</label>
+          <div class="input-row">
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="temp-input"
+                class="temp-input"
+                placeholder="e.g. 100"
+                autocomplete="off"
+                aria-describedby="input-error"
+                inputmode="decimal"
+              />
+              <span class="input-unit-badge" id="input-unit-badge" aria-hidden="true">°C</span>
+            </div>
+          </div>
+          <p class="error-msg" id="input-error" role="alert" aria-live="assertive"></p>
+        </div>
+
+        <!-- Unit selectors -->
+        <div class="units-row" role="group" aria-label="Temperature units">
+          <div class="unit-selector" id="from-selector">
+            <span class="selector-label">From</span>
+            <div class="unit-buttons" role="radiogroup" aria-label="Convert from unit">
+              <button class="unit-btn active" data-unit="celsius" data-selector="from" aria-pressed="true" title="Celsius">
+                <span class="unit-symbol">°C</span>
+                <span class="unit-name">Celsius</span>
+              </button>
+              <button class="unit-btn" data-unit="fahrenheit" data-selector="from" aria-pressed="false" title="Fahrenheit">
+                <span class="unit-symbol">°F</span>
+                <span class="unit-name">Fahrenheit</span>
+              </button>
+              <button class="unit-btn" data-unit="kelvin" data-selector="from" aria-pressed="false" title="Kelvin">
+                <span class="unit-symbol">K</span>
+                <span class="unit-name">Kelvin</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Swap Button -->
+          <button class="swap-btn" id="swap-btn" aria-label="Swap from and to units" title="Swap units">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 16V4m0 0L3 8m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17 8v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="unit-selector" id="to-selector">
+            <span class="selector-label">To</span>
+            <div class="unit-buttons" role="radiogroup" aria-label="Convert to unit">
+              <button class="unit-btn" data-unit="celsius" data-selector="to" aria-pressed="false" title="Celsius">
+                <span class="unit-symbol">°C</span>
+                <span class="unit-name">Celsius</span>
+              </button>
+              <button class="unit-btn active" data-unit="fahrenheit" data-selector="to" aria-pressed="true" title="Fahrenheit">
+                <span class="unit-symbol">°F</span>
+                <span class="unit-name">Fahrenheit</span>
+              </button>
+              <button class="unit-btn" data-unit="kelvin" data-selector="to" aria-pressed="false" title="Kelvin">
+                <span class="unit-symbol">K</span>
+                <span class="unit-name">Kelvin</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Convert Button -->
+        <button class="convert-btn" id="convert-btn" aria-label="Convert temperature">
+          <span class="btn-text">Convert</span>
+          <span class="btn-loader" aria-hidden="true"></span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Result -->
+        <div class="result-area" id="result-area" aria-live="polite" aria-atomic="true" hidden>
+          <div class="result-card">
+            <div class="result-label">Result</div>
+            <div class="result-value" id="result-value"></div>
+            <div class="result-formula" id="result-formula"></div>
+            <button class="copy-btn" id="copy-btn" aria-label="Copy result to clipboard" title="Copy to clipboard">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+
+          <!-- All-units quick reference -->
+          <div class="all-units" id="all-units" aria-label="All unit equivalents"></div>
+        </div>
+
+      </section>
+
+      <!-- History Section -->
+      <section class="history-section" id="history-section" aria-label="Conversion history">
+        <div class="history-header">
+          <h2 class="history-title">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>
+            History
+          </h2>
+          <button class="clear-btn" id="clear-history-btn" aria-label="Clear conversion history">Clear All</button>
+        </div>
+        <ul class="history-list" id="history-list" role="list" aria-label="Previous conversions">
+          <li class="history-empty" id="history-empty">No conversions yet — start converting!</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <p>Built with precision &amp; care &mdash; ThermoConvert &copy; <span id="footer-year"></span></p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SliceDash — Premium Pizza Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+<link href="style.css" rel="stylesheet"/></head>
+<body>
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="navbar" id="navbar">
+<div class="nav-logo" onclick="showPage('home')">
+<div class="logo-icon">🍕</div>
+    Slice<span>Dash</span>
+</div>
+<div class="nav-links">
+<a class="active" onclick="showPage('home')">Menu</a>
+<a onclick="showPage('builder')">Pizza Builder</a>
+<a onclick="showPage('tracking')">Track Order</a>
+<a onclick="showPage('history')">My Orders</a>
+<a onclick="showPage('admin')">Admin</a>
+<a onclick="showPage('delivery')">Delivery</a>
+</div>
+<div class="nav-right">
+<button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart <span class="cart-count" id="cart-count">0</span>
+</button>
+<button class="btn-primary" id="auth-btn" onclick="showPage('auth')">Sign In</button>
+</div>
+</nav>
+<!-- ═══════════════ TOAST CONTAINER ═══════════════ -->
+<div id="toast-container"></div>
+<!-- ══════════════════════════════════════════════
+     PAGE: HOME / MENU
+══════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+<!-- Hero -->
+<section class="hero">
+<div class="hero-bg"></div>
+<div class="floating-items" id="floating-items"></div>
+<div class="hero-badge"><div class="pulse-dot"></div> Free delivery on orders above ₹299</div>
+<h1>
+      Hot, Fast &amp;<br/>
+<span class="grad">Delicious.</span>
+</h1>
+<p>Premium pizzas crafted with love, delivered to your door in under 30 minutes. Build your own or choose from our chef's specials.</p>
+<div class="hero-btns">
+<button class="btn-primary" onclick="document.getElementById('menu-section').scrollIntoView({behavior:'smooth'})">🍕 Order Now</button>
+<button class="btn-secondary" onclick="showPage('builder')">🎨 Build Your Pizza</button>
+</div>
+</section>
+<!-- AI Recommendations -->
+<div class="ai-section" style="margin:0 auto 32px;padding:0 24px;max-width:1100px;">
+<div style="background:linear-gradient(135deg,rgba(124,77,255,.08),rgba(255,87,34,.06));border:1px solid rgba(124,77,255,.2);border-radius:18px;padding:28px;">
+<div class="ai-header">
+<span style="font-size:22px;">🤖</span>
+<div>
+<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;">AI Picks For You</div>
+<div style="color:var(--text2);font-size:13px;">Based on your taste profile</div>
+</div>
+<div class="ai-badge">✨ AI Powered</div>
+</div>
+<div class="ai-scroll" id="ai-recs"></div>
+</div>
+</div>
+<!-- Search -->
+<div class="search-wrapper" style="max-width:1100px;">
+<div class="search-bar">
+<span class="search-icon">🔍</span>
+<input id="search-input" oninput="filterMenu()" placeholder="Search pizzas, pastas, sides..." type="text"/>
+</div>
+</div>
+<!-- Categories -->
+<div class="categories">
+<div class="cats-row" id="cats-row">
+<div class="cat-pill active" onclick="filterCat('all',this)">🍕 All</div>
+<div class="cat-pill" onclick="filterCat('classic',this)">🍅 Classic</div>
+<div class="cat-pill" onclick="filterCat('veggie',this)">🥦 Veggie</div>
+<div class="cat-pill" onclick="filterCat('premium',this)">👑 Premium</div>
+<div class="cat-pill" onclick="filterCat('spicy',this)">🌶️ Spicy</div>
+<div class="cat-pill" onclick="filterCat('sides',this)">🧄 Sides</div>
+<div class="cat-pill" onclick="filterCat('drinks',this)">🥤 Drinks</div>
+</div>
+</div>
+<!-- Menu -->
+<div class="menu-section" id="menu-section">
+<div class="section-title">🔥 Most Popular</div>
+<div class="pizza-grid" id="pizza-grid">
+<!-- Skeleton loaders -->
+<div class="skeleton-card"><div class="skeleton skel-img"></div><div class="skeleton skel-line"></div><div class="skeleton skel-line2"></div></div>
+<div class="skeleton-card"><div class="skeleton skel-img"></div><div class="skeleton skel-line"></div><div class="skeleton skel-line2"></div></div>
+<div class="skeleton-card"><div class="skeleton skel-img"></div><div class="skeleton skel-line"></div><div class="skeleton skel-line2"></div></div>
+<div class="skeleton-card"><div class="skeleton skel-img"></div><div class="skeleton skel-line"></div><div class="skeleton skel-line2"></div></div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: PIZZA BUILDER
+══════════════════════════════════════════════ -->
+<div class="page" id="page-builder">
+<div class="builder-wrap">
+<div class="builder-header">
+<h2>🎨 Build Your Perfect Pizza</h2>
+<p>Customize every layer to create your dream pizza</p>
+</div>
+<div class="builder-grid">
+<div class="builder-steps">
+<!-- Step 1: Size -->
+<div class="builder-step active-step">
+<div class="step-title"><div class="step-num">1</div>Choose Size</div>
+<div class="option-grid" id="size-opts">
+<div class="option-chip" data-size="6" onclick="selectSize(this,'6&quot; Personal','₹199')">6" Personal</div>
+<div class="option-chip selected" data-size="8" onclick="selectSize(this,'8&quot; Regular','₹299')">8" Regular</div>
+<div class="option-chip" data-size="10" onclick="selectSize(this,'10&quot; Large','₹399')">10" Large</div>
+<div class="option-chip" data-size="12" onclick="selectSize(this,'12&quot; Party','₹549')">12" Party 🎉</div>
+</div>
+</div>
+<!-- Step 2: Crust -->
+<div class="builder-step">
+<div class="step-title"><div class="step-num">2</div>Select Crust</div>
+<div class="option-grid" id="crust-opts">
+<div class="option-chip selected" onclick="selectOpt(this,'crust','Thin Crust')">Thin &amp; Crispy</div>
+<div class="option-chip" onclick="selectOpt(this,'crust','Classic Hand-Tossed')">Hand-Tossed</div>
+<div class="option-chip" onclick="selectOpt(this,'crust','Thick Pan')">Thick Pan</div>
+<div class="option-chip" onclick="selectOpt(this,'crust','Stuffed Cheese Crust (+₹60)')">🧀 Cheese Stuffed <span style="color:var(--orange2);font-size:11px;">+₹60</span></div>
+<div class="option-chip" onclick="selectOpt(this,'crust','Gluten-Free (+₹40)')">🌾 Gluten-Free <span style="color:var(--orange2);font-size:11px;">+₹40</span></div>
+</div>
+</div>
+<!-- Step 3: Sauce -->
+<div class="builder-step">
+<div class="step-title"><div class="step-num">3</div>Pick Sauce</div>
+<div class="option-grid" id="sauce-opts">
+<div class="option-chip selected" onclick="selectOpt(this,'sauce','Classic Tomato')">🍅 Classic Tomato</div>
+<div class="option-chip" onclick="selectOpt(this,'sauce','Pesto Basil')">🌿 Pesto Basil</div>
+<div class="option-chip" onclick="selectOpt(this,'sauce','BBQ Smoky')">🔥 BBQ Smoky</div>
+<div class="option-chip" onclick="selectOpt(this,'sauce','White Garlic')">🧄 White Garlic</div>
+<div class="option-chip" onclick="selectOpt(this,'sauce','Spicy Arrabiata')">🌶️ Arrabiata</div>
+</div>
+</div>
+<!-- Step 4: Cheese -->
+<div class="builder-step">
+<div class="step-title"><div class="step-num">4</div>Select Cheese</div>
+<div class="option-grid" id="cheese-opts">
+<div class="option-chip selected" onclick="selectOpt(this,'cheese','Mozzarella')">🧀 Mozzarella</div>
+<div class="option-chip" onclick="selectOpt(this,'cheese','Double Mozzarella (+₹40)')">Double Mozz</div>
+<div class="option-chip" onclick="selectOpt(this,'cheese','Cheddar')">Cheddar</div>
+<div class="option-chip" onclick="selectOpt(this,'cheese','Parmesan')">Parmesan</div>
+<div class="option-chip" onclick="selectOpt(this,'cheese','4-Cheese Blend (+₹50)')">✨ 4-Cheese</div>
+</div>
+</div>
+<!-- Step 5: Toppings -->
+<div class="builder-step">
+<div class="step-title"><div class="step-num">5</div>Add Toppings <span style="font-size:11px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(pick up to 6)</span></div>
+<div class="toppings-grid" id="toppings-grid">
+<div class="topping-item" onclick="toggleTopping(this,'Bell Peppers')"><div class="topping-check"></div>🫑 Bell Peppers</div>
+<div class="topping-item" onclick="toggleTopping(this,'Mushrooms')"><div class="topping-check"></div>🍄 Mushrooms</div>
+<div class="topping-item" onclick="toggleTopping(this,'Onions')"><div class="topping-check"></div>🧅 Onions</div>
+<div class="topping-item" onclick="toggleTopping(this,'Olives')"><div class="topping-check"></div>🫒 Olives</div>
+<div class="topping-item" onclick="toggleTopping(this,'Jalapeños')"><div class="topping-check"></div>🌶️ Jalapeños</div>
+<div class="topping-item" onclick="toggleTopping(this,'Corn')"><div class="topping-check"></div>🌽 Sweet Corn</div>
+<div class="topping-item" onclick="toggleTopping(this,'Paneer')"><div class="topping-check"></div>🟡 Paneer</div>
+<div class="topping-item" onclick="toggleTopping(this,'Chicken')"><div class="topping-check"></div>🍗 Chicken</div>
+<div class="topping-item" onclick="toggleTopping(this,'Pepperoni')"><div class="topping-check"></div>🥩 Pepperoni</div>
+<div class="topping-item" onclick="toggleTopping(this,'Pineapple')"><div class="topping-check"></div>🍍 Pineapple</div>
+<div class="topping-item" onclick="toggleTopping(this,'Sun-dried Tomato')"><div class="topping-check"></div>🍅 Sun-dried Tom.</div>
+<div class="topping-item" onclick="toggleTopping(this,'Spinach')"><div class="topping-check"></div>🥬 Spinach</div>
+</div>
+</div>
+</div>
+<!-- Summary Panel -->
+<div class="builder-summary">
+<div class="pizza-preview" id="pizza-preview">🍕</div>
+<div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;text-align:center;">Your Custom Pizza</div>
+<div class="summary-row"><span>Size</span><span id="s-size">8" Regular</span></div>
+<div class="summary-row"><span>Crust</span><span id="s-crust">Thin Crust</span></div>
+<div class="summary-row"><span>Sauce</span><span id="s-sauce">Classic Tomato</span></div>
+<div class="summary-row"><span>Cheese</span><span id="s-cheese">Mozzarella</span></div>
+<div class="summary-row"><span>Toppings</span><span id="s-toppings">None</span></div>
+<div class="summary-total" id="builder-total">₹299</div>
+<button class="btn-primary" onclick="addBuilderToCart()" style="width:100%;padding:14px;font-size:15px;border-radius:12px;">
+          🛒 Add to Cart
+        </button>
+<button class="btn-secondary" onclick="showPage('home')" style="width:100%;padding:12px;font-size:14px;border-radius:12px;margin-top:10px;">
+          ← Back to Menu
+        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: AUTH
+══════════════════════════════════════════════ -->
+<div class="page" id="page-auth">
+<div id="page-auth-inner">
+<div class="auth-card">
+<div class="auth-logo">
+<div class="logo-icon">🍕</div>
+<h2>Welcome Back</h2>
+<p>Sign in to your SliceDash account</p>
+</div>
+<div class="tabs">
+<button class="tab active" onclick="switchAuthTab('login',this)">Sign In</button>
+<button class="tab" onclick="switchAuthTab('signup',this)">Create Account</button>
+</div>
+<!-- Login Form -->
+<div id="login-form">
+<div class="form-group">
+<label class="form-label">Email Address</label>
+<div class="form-input-wrap">
+<span class="input-icon">📧</span>
+<input class="form-input has-icon" id="login-email" placeholder="you@example.com" type="email"/>
+</div>
+<div class="form-error" id="login-email-err">Please enter a valid email</div>
+</div>
+<div class="form-group">
+<label class="form-label">Password</label>
+<div class="form-input-wrap">
+<span class="input-icon">🔐</span>
+<input class="form-input has-icon" id="login-pass" placeholder="Your password" type="password"/>
+</div>
+<div class="form-error" id="login-pass-err">Password is required</div>
+</div>
+<a class="forgot-link" onclick="showForgot()">Forgot password?</a>
+<button class="btn-primary" onclick="doLogin()" style="width:100%;padding:14px;font-size:15px;border-radius:12px;">Sign In →</button>
+<div class="social-divider">or continue with</div>
+<div class="social-btns">
+<button class="social-btn" onclick="socialLogin('Google')">🟢 Google</button>
+<button class="social-btn" onclick="socialLogin('Facebook')">🔵 Facebook</button>
+</div>
+</div>
+<!-- Signup Form -->
+<div id="signup-form" style="display:none;">
+<div class="form-group">
+<label class="form-label">Full Name</label>
+<div class="form-input-wrap">
+<span class="input-icon">👤</span>
+<input class="form-input has-icon" id="signup-name" placeholder="Your full name" type="text"/>
+</div>
+<div class="form-error" id="signup-name-err">Name is required</div>
+</div>
+<div class="form-group">
+<label class="form-label">Email Address</label>
+<div class="form-input-wrap">
+<span class="input-icon">📧</span>
+<input class="form-input has-icon" id="signup-email" placeholder="you@example.com" type="email"/>
+</div>
+<div class="form-error" id="signup-email-err">Valid email required</div>
+</div>
+<div class="form-group">
+<label class="form-label">Phone Number</label>
+<div class="form-input-wrap">
+<span class="input-icon">📱</span>
+<input class="form-input has-icon" id="signup-phone" placeholder="+91 98765 43210" type="tel"/>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Password</label>
+<div class="form-input-wrap">
+<span class="input-icon">🔐</span>
+<input class="form-input has-icon" id="signup-pass" placeholder="Min 8 characters" type="password"/>
+</div>
+<div class="form-error" id="signup-pass-err">Min 8 characters required</div>
+</div>
+<button class="btn-primary" onclick="doSignup()" style="width:100%;padding:14px;font-size:15px;border-radius:12px;">Create Account →</button>
+<div class="social-divider">or</div>
+<div class="social-btns">
+<button class="social-btn" onclick="socialLogin('Google')">🟢 Google</button>
+<button class="social-btn" onclick="socialLogin('Facebook')">🔵 Facebook</button>
+</div>
+</div>
+<div class="auth-footer">
+<a onclick="showPage('home')">← Back to menu</a>
+</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: ORDER TRACKING
+══════════════════════════════════════════════ -->
+<div class="page" id="page-tracking">
+<div class="tracking-wrap">
+<div class="tracking-header">
+<h2>📍 Live Order Tracking</h2>
+<p>Your pizza is on its way!</p>
+<div class="order-id-badge">Order #SD-8821</div>
+</div>
+<!-- Timeline -->
+<div class="tracking-timeline">
+<div class="timeline-step done">
+<div class="step-icon">✅</div>
+<div class="step-content">
+<div class="step-label">Order Placed</div>
+<div class="step-sub">We received your order</div>
+<div class="step-time">7:12 PM</div>
+</div>
+</div>
+<div class="timeline-step done">
+<div class="step-icon">✅</div>
+<div class="step-content">
+<div class="step-label">Order Confirmed</div>
+<div class="step-sub">Restaurant accepted your order</div>
+<div class="step-time">7:14 PM</div>
+</div>
+</div>
+<div class="timeline-step current" id="step-cooking">
+<div class="step-icon">👨‍🍳</div>
+<div class="step-content">
+<div class="step-label">Being Prepared</div>
+<div class="step-sub">Chef is crafting your pizza</div>
+<div class="step-time">Est. 7:30 PM</div>
+</div>
+</div>
+<div class="timeline-step" id="step-delivery">
+<div class="step-icon">🛵</div>
+<div class="step-content">
+<div class="step-label">Out for Delivery</div>
+<div class="step-sub">Your rider is on the way</div>
+<div class="step-time">—</div>
+</div>
+</div>
+<div class="timeline-step" id="step-delivered">
+<div class="step-icon">🏠</div>
+<div class="step-content">
+<div class="step-label">Delivered</div>
+<div class="step-sub">Enjoy your meal!</div>
+<div class="step-time">—</div>
+</div>
+</div>
+</div>
+<!-- Driver Info -->
+<div class="driver-card">
+<div class="driver-avatar">🧑‍🦱</div>
+<div class="driver-info">
+<div class="driver-name">Rahul Kumar</div>
+<div class="driver-sub">⭐ 4.9 · Hero Splendor · MH12-AB-1234</div>
+</div>
+<div class="driver-actions">
+<button class="icon-btn" onclick="showToast('Calling Rahul...','info')">📞</button>
+<button class="icon-btn" onclick="showToast('Opening chat...','info')">💬</button>
+</div>
+</div>
+<!-- Map -->
+<div class="fake-map" style="margin-top:20px;">
+<div class="map-grid"></div>
+<div class="map-route"></div>
+<div class="map-dot"></div>
+<div class="map-label" style="bottom:14px;left:20px;">📍 Restaurant</div>
+<div class="map-label" style="bottom:14px;right:20px;">🏠 Your Location</div>
+</div>
+<div style="margin-top:20px;display:flex;gap:12px;">
+<button class="btn-secondary" onclick="advanceTracking()" style="flex:1;padding:12px;">⏩ Simulate Update</button>
+<button class="btn-primary" onclick="showPage('history')" style="flex:1;padding:12px;">📋 Order History</button>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: PAYMENT
+══════════════════════════════════════════════ -->
+<div class="page" id="page-payment">
+<div class="payment-wrap">
+<div class="payment-card">
+<div class="payment-title">💳 Secure Checkout</div>
+<!-- Order Summary Mini -->
+<div class="order-summary-mini">
+<div style="font-weight:700;font-size:14px;margin-bottom:12px;">Order Summary</div>
+<div id="payment-items"></div>
+<div class="summary-line"><span>Subtotal</span><span id="pay-sub">₹0</span></div>
+<div class="summary-line"><span>Delivery fee</span><span>₹40</span></div>
+<div class="summary-line"><span>Taxes (5%)</span><span id="pay-tax">₹0</span></div>
+<div class="summary-total-line"><span>Total</span><span id="pay-total" style="color:var(--orange2);">₹0</span></div>
+</div>
+<!-- Payment Methods -->
+<div style="font-weight:700;font-size:14px;margin-bottom:12px;">Payment Method</div>
+<div class="payment-methods">
+<div class="pay-method selected" onclick="selectPayment(this)">
+<span class="pm-icon">💳</span>Card
+        </div>
+<div class="pay-method" onclick="selectPayment(this)">
+<span class="pm-icon">📱</span>UPI
+        </div>
+<div class="pay-method" onclick="selectPayment(this)">
+<span class="pm-icon">🏦</span>Net Banking
+        </div>
+<div class="pay-method" onclick="selectPayment(this)">
+<span class="pm-icon">💵</span>Cash on Delivery
+        </div>
+</div>
+<!-- Card Form -->
+<div class="card-form" id="card-form">
+<div class="form-group" style="margin-bottom:12px;">
+<label class="form-label">Card Number</label>
+<input class="form-input" maxlength="19" oninput="formatCard(this)" placeholder="4242 4242 4242 4242" type="text"/>
+</div>
+<div class="card-row">
+<div class="form-group" style="margin-bottom:0;">
+<label class="form-label">Expiry</label>
+<input class="form-input" maxlength="5" placeholder="MM/YY" type="text"/>
+</div>
+<div class="form-group" style="margin-bottom:0;">
+<label class="form-label">CVV</label>
+<input class="form-input" maxlength="3" placeholder="•••" type="password"/>
+</div>
+</div>
+</div>
+<div id="payment-form-area">
+<button class="btn-primary" id="pay-btn" onclick="processPayment()" style="width:100%;padding:15px;font-size:16px;border-radius:12px;">
+          🔒 Pay Now
+        </button>
+<p style="text-align:center;color:var(--text3);font-size:12px;margin-top:10px;">
+          🛡️ Secured by 256-bit SSL encryption
+        </p>
+</div>
+<!-- Success State -->
+<div class="payment-success" id="payment-success">
+<div class="success-icon">✅</div>
+<h3>Payment Successful!</h3>
+<p>Your order has been placed. Estimated delivery: <strong>28–35 minutes</strong></p>
+<button class="btn-primary" onclick="showPage('tracking')" style="padding:13px 32px;font-size:15px;border-radius:12px;">
+          📍 Track Your Order
+        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: ORDER HISTORY
+══════════════════════════════════════════════ -->
+<div class="page" id="page-history">
+<div class="history-wrap">
+<h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;">📋 My Orders</h2>
+<p style="color:var(--text2);margin-bottom:28px;">Your recent pizza adventures</p>
+<div id="history-list"></div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: ADMIN DASHBOARD
+══════════════════════════════════════════════ -->
+<div class="page" id="page-admin">
+<!-- Sidebar -->
+<div class="admin-sidebar">
+<div class="sidebar-section">Overview</div>
+<div class="sidebar-item active" onclick="switchAdmin('overview',this)"><span class="sidebar-icon">📊</span>Dashboard</div>
+<div class="sidebar-item" onclick="switchAdmin('orders',this)"><span class="sidebar-icon">🛒</span>Orders</div>
+<div class="sidebar-section">Management</div>
+<div class="sidebar-item" onclick="switchAdmin('menu',this)"><span class="sidebar-icon">🍕</span>Menu Items</div>
+<div class="sidebar-item" onclick="switchAdmin('inventory',this)"><span class="sidebar-icon">📦</span>Inventory</div>
+<div class="sidebar-item" onclick="switchAdmin('customers',this)"><span class="sidebar-icon">👥</span>Customers</div>
+<div class="sidebar-section">Analytics</div>
+<div class="sidebar-item" onclick="switchAdmin('analytics',this)"><span class="sidebar-icon">📈</span>Analytics</div>
+<div style="padding:16px 12px;margin-top:auto;">
+<button class="btn-secondary" onclick="showPage('home')" style="width:100%;font-size:13px;padding:10px;">← Back to App</button>
+</div>
+</div>
+<!-- Main Content -->
+<div class="admin-main">
+<!-- Overview Panel -->
+<div class="admin-panel active" id="admin-overview">
+<div class="admin-topbar">
+<h2>Dashboard Overview</h2>
+<div style="color:var(--text2);font-size:14px;">📅 Today, <span id="today-date"></span></div>
+</div>
+<div class="kpi-grid">
+<div class="kpi-card c1"><div class="kpi-icon">🛒</div><div class="kpi-val" id="kpi-orders">0</div><div class="kpi-label">Today's Orders</div><div class="kpi-trend trend-up">↑ 12%</div></div>
+<div class="kpi-card c2"><div class="kpi-icon">💰</div><div class="kpi-val" id="kpi-revenue">₹0</div><div class="kpi-label">Revenue</div><div class="kpi-trend trend-up">↑ 8%</div></div>
+<div class="kpi-card c3"><div class="kpi-icon">⏱️</div><div class="kpi-val">24 min</div><div class="kpi-label">Avg Delivery</div><div class="kpi-trend trend-down">↓ 2 min</div></div>
+<div class="kpi-card c4"><div class="kpi-icon">🛵</div><div class="kpi-val">12</div><div class="kpi-label">Active Riders</div><div class="kpi-trend trend-up">↑ 3</div></div>
+</div>
+<!-- Chart -->
+<div class="chart-card">
+<div class="chart-title">
+          📊 Weekly Revenue
+          <span style="color:var(--text3);font-size:13px;font-weight:500;">Last 7 days</span>
+</div>
+<div class="chart-bars" id="chart-bars"></div>
+<div id="chart-labels" style="display:flex;gap:8px;justify-content:center;margin-top:4px;"></div>
+</div>
+<!-- Tables -->
+<div class="admin-tables">
+<div class="table-card">
+<div class="table-head">🔥 Live Orders <span class="chip-green" style="font-size:11px;">LIVE</span></div>
+<div id="live-orders-table"></div>
+</div>
+<div class="table-card">
+<div class="table-head">🏆 Top Items</div>
+<div id="top-items-table"></div>
+</div>
+</div>
+</div>
+<!-- Orders Panel -->
+<div class="admin-panel" id="admin-orders">
+<div class="admin-topbar"><h2>All Orders</h2><button class="btn-primary" onclick="showToast('Exporting orders...','info')" style="font-size:13px;padding:9px 18px;">📥 Export</button></div>
+<div id="all-orders-table" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;"></div>
+</div>
+<!-- Menu Panel -->
+<div class="admin-panel" id="admin-menu">
+<div class="admin-topbar"><h2>Menu Items</h2><button class="btn-primary" onclick="showToast('Add item form coming soon','info')" style="font-size:13px;padding:9px 18px;">+ Add Item</button></div>
+<div class="pizza-grid" id="admin-menu-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));"></div>
+</div>
+<!-- Inventory Panel -->
+<div class="admin-panel" id="admin-inventory">
+<div class="admin-topbar"><h2>Inventory</h2><span style="color:var(--text2);font-size:14px;">Last updated: just now</span></div>
+<div id="inventory-list"></div>
+</div>
+<!-- Customers Panel -->
+<div class="admin-panel" id="admin-customers">
+<div class="admin-topbar"><h2>Customers</h2></div>
+<div class="table-card"><div id="customers-table"></div></div>
+</div>
+<!-- Analytics Panel -->
+<div class="admin-panel" id="admin-analytics">
+<div class="admin-topbar"><h2>Sales Analytics</h2></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+<div class="chart-card">
+<div class="chart-title">📅 Monthly Orders</div>
+<div class="chart-bars" id="monthly-bars"></div>
+</div>
+<div class="chart-card">
+<div class="chart-title">🍕 Category Sales</div>
+<div id="cat-breakdown" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     PAGE: DELIVERY PARTNER
+══════════════════════════════════════════════ -->
+<div class="page" id="page-delivery">
+<div class="delivery-wrap">
+<div class="delivery-header">
+<h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;">🛵 Delivery Partner</h2>
+<p style="color:var(--text2);">Manage your deliveries and earnings</p>
+</div>
+<!-- Online toggle -->
+<div class="online-toggle">
+<span style="font-size:14px;font-weight:600;color:var(--text2);">Go Online</span>
+<div class="toggle-track on" id="online-toggle" onclick="toggleOnline()">
+<div class="toggle-thumb"></div>
+</div>
+<span id="online-status" style="font-size:14px;font-weight:600;color:var(--green)">Online</span>
+</div>
+<!-- Earnings -->
+<div class="earnings-grid">
+<div class="earn-card"><div class="earn-val">₹842</div><div class="earn-label">Today</div></div>
+<div class="earn-card"><div class="earn-val">₹4,210</div><div class="earn-label">This Week</div></div>
+<div class="earn-card"><div class="earn-val" style="color:var(--cyan);">14</div><div class="earn-label">Deliveries</div></div>
+</div>
+<!-- Incoming order request -->
+<div class="order-request-card" id="order-request">
+<div class="request-header">
+<div>
+<div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;">New Order Request</div>
+<div style="color:var(--text2);font-size:13px;margin-top:3px;">Order #SD-8822</div>
+</div>
+<div style="text-align:right;">
+<div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green);">₹60</div>
+<div style="color:var(--text3);font-size:12px;">earning</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;">
+<div style="background:var(--bg2);border-radius:10px;padding:12px;">
+<div style="color:var(--text3);margin-bottom:4px;font-size:11px;">PICKUP</div>
+<div style="font-weight:600;">SliceDash — Koregaon Park</div>
+<div style="color:var(--text2);">0.8 km away</div>
+</div>
+<div style="background:var(--bg2);border-radius:10px;padding:12px;">
+<div style="color:var(--text3);margin-bottom:4px;font-size:11px;">DELIVER TO</div>
+<div style="font-weight:600;">Priya Sharma</div>
+<div style="color:var(--text2);">3.2 km · 12 min</div>
+</div>
+</div>
+<div class="request-actions">
+<button class="btn-accept" onclick="acceptOrder()">✅ Accept</button>
+<button class="btn-reject" onclick="rejectOrder()">✕ Reject</button>
+</div>
+</div>
+<!-- Delivery history mini -->
+<div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px;">📋 Recent Deliveries</div>
+<div id="delivery-history"></div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     CART SIDEBAR
+══════════════════════════════════════════════ -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+<div class="cart-header">
+<h3>🛒 Your Cart</h3>
+<button class="close-btn" onclick="toggleCart()">✕</button>
+</div>
+<div id="cart-body">
+<div class="cart-empty">
+<div class="empty-icon">🍕</div>
+<div style="font-size:16px;font-weight:600;color:var(--text2);">Your cart is empty</div>
+<div style="font-size:13px;">Add some delicious pizzas!</div>
+</div>
+</div>
+<div class="cart-footer" id="cart-footer" style="display:none;">
+<div class="cart-total-row"><span>Subtotal</span><span id="cart-subtotal">₹0</span></div>
+<div class="cart-total-row"><span>Delivery</span><span>₹40</span></div>
+<div class="cart-grand"><span>Total</span><span id="cart-grand-total">₹0</span></div>
+<button class="checkout-btn" onclick="goCheckout()">Proceed to Pay →</button>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════
+     CHAT BOT
+══════════════════════════════════════════════ -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()">💬</button>
+<div class="chat-window" id="chat-window">
+<div class="chat-head">
+<span class="chat-head-icon">🤖</span>
+<h4>SliceBot</h4>
+<span style="color:rgba(255,255,255,.7);font-size:12px;">● Online</span>
+<button class="chat-close" onclick="toggleChat()">✕</button>
+</div>
+<div class="chat-msgs" id="chat-msgs">
+<div class="msg bot">👋 Hi there! I'm SliceBot. How can I help you today?</div>
+</div>
+<div class="chat-quick" id="quick-chips">
+<div class="quick-chip" onclick="quickMsg('Track my order')">Track order</div>
+<div class="quick-chip" onclick="quickMsg('Best sellers?')">Best sellers</div>
+<div class="quick-chip" onclick="quickMsg('Offers today')">Offers</div>
+<div class="quick-chip" onclick="quickMsg('Delivery time?')">Delivery time</div>
+</div>
+<div class="chat-input-row">
+<input class="chat-input" id="chat-input" onkeypress="if(event.key==='Enter')sendChat()" placeholder="Type a message..." type="text"/>
+<button class="chat-send" onclick="sendChat()">➤</button>
+</div>
+</div>
+<!-- ════════════════════════════════════
+     JAVASCRIPT — ALL APP LOGIC
+════════════════════════════════════ -->
+
+<script src="script.js"></script></body>
+</html>
