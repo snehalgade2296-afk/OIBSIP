@@ -43,7 +43,19 @@ This repository contains all the projects and tasks completed during my **Web De
 
 ---
 
+ OIBSIP
 
+## Task 1 - Temperature Converter
+Live Demo:
+https://snehalgade2296-afk.github.io/OIBSIP/Task1_ThermoConverter/SNEHALGADE_TASK1.html
+
+## Task 2 - To-Do Web App
+Live Demo:
+https://snehalgade2296-afk.github.io/OIBSIP/Task2_TodoWebApp/SNEHALGADE_TASK2.html
+
+## Task 3 - Pizza Delivery Application
+Source Code:
+https://github.com/snehalgade2296-afk/OIBSIP/tree/main/Task3_PizzaDeliveryApp/SNEHALGADE_Task3.html
 
 ## Contact
 
